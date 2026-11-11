@@ -1,0 +1,84 @@
+
+I have three dongles:
+  Bus 001 Device 031: ID 0451:16ae Texas Instruments, Inc. CC2531 Dongle
+  Bus 001 Device 032: ID 0451:16ae Texas Instruments, Inc. CC2531 Dongle
+
+1) Will work with wireshark
+   Packet sniffer: flashed with TI’s sniffer firmware and used with Wireshark 
+drori@49ers 2026-11-10 14:41:59 /tmp/work $ nix-shell -p cc-tool --run '/run/wrappers/bin/sudo $(which cc-tool) -n CC2531'
+  Programmer: CC Debugger
+  Target: CC2531
+  No actions specified
+     to capture Zigbee traffic. This is what we’re doing first.
+    
+ 
+   NOT NEEDED FOR NOW
+2) Will work with ZHA or Z2M (once I know what these are)
+   This means it will work as a Zigbee Coordinator (WHICH I CURRENTLY DO NOT NEED!)
+     Zigbee coordinator: flashed with Z-Stack coordinator firmware to run a 
+        Zigbee network with either ZHA or Zigbee2MQTT. This is parked for later.
+
+To flash them we need a 
+  CC debugger  $10-15 Which I will order when I get back from Iceland.
+
+  Zigbee Emulator CC-Debugger USB Programmer CC2540 CC2531 
+    Sniffer Wireless Bluetooth 4.0 Module Connector Downloader Cable
+  
+
+
+
+Download PACKET-SNIFFER from:
+  https://www.ti.com/tool/PACKET-SNIFFER
+    to /tmp/WORK
+
+In /tmp/WORK
+  nix-shell -p p7zip --run '7z x swrc045z.zip -oPACKET-SNIFFER && 7z e PACKET-SNIFFER/Setup_SmartRF_Packet_Sniffer_2.18.0.exe bin/general/firmware/sniffer_fw_cc2531.hex'
+ls -l sniffer_fw_cc2531.hex
+
+rori@49ers 2026-11-10 14:11:24 /tmp/WORK $ ls -lrt
+total 23028
+-rw-r--r-- 1 drori users    23190 Jun 19  2014 sniffer_fw_cc2531.hex
+-rw-r--r-- 1 drori users 23553042 Nov 10 14:07 swrc045z.zip
+drwx------ 1 drori users      176 Nov 10 14:11 PACKET-SNIFFER
+
+Plugin to USB the following:
+  1) The sniffer. (Has an antenna)
+  2) The CC DEbugger.   
+      Connect them with cables 
+      Make sure the red part on the ribbon goes to the Antenna
+      Make sure the RED In the connector is in the same direction as the Incoming cables RED wire.
+
+BE CAREFULL!! 
+CHECK PHOTOS:
+SOME OF THE CONNECTORS HAVE 6 PINS And are connected to a cable with more WIRES
+BE CAREFULL!! 
+
+
+
+# Check the deubgger is working:
+#This means The Debugger sees the CC2531. Now flash it (erase, write, verify) 
+drori@49ers 2026-11-10 14:48:03 /tmp/work $ nix-shell -p cc-tool --run '/run/wrappers/bin/sudo $(which cc-tool) -n CC2531'
+  Programmer: CC Debugger
+  Target: CC2531
+  No actions specified
+
+
+
+#Now Flash the debugger:
+drori@49ers 2026-11-10 14:47:12 IN /tmp/work $ nix-shell -p cc-tool --run '/run/wrappers/bin/sudo $(which cc-tool) -n CC2531 -e -w /tmp/work/sniffer_fw_cc2531.hex -v'
+  Programmer: CC Debugger
+  Target: CC2531
+  Erasing flash...
+  Completed       
+  Writing flash (8 KB)...
+  Completed (0.68 s.)
+  Verifying flash...
+  Completed (0.39 s.)
+drori@49ers 2026-11-10 14:47:17 /tmp/work $ 
+
+
+
+
+
+
+
